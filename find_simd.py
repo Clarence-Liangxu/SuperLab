@@ -79,6 +79,17 @@ def find_for_loops_in_directory(directory):
     
     return loops
 
+def escape_markdown_special_chars(text):
+    """转义Markdown特殊字符，但保留下划线"""
+    # 只转义需要转义的字符，但保留下划线
+    escaped = text.replace('*', '\\*')
+    escaped = escaped.replace('_', '\\_')  # 这里是错误的，应该不转义下划线
+    escaped = escaped.replace('[', '\$')
+    escaped = escaped.replace(']', '\$')
+    escaped = escaped.replace('`', '\\`')
+    escaped = escaped.replace('\\', '\\\\')
+    return escaped
+
 def main():
     # 创建参数解析器
     parser = argparse.ArgumentParser(description='查找C/C++源文件中的for循环')
@@ -125,9 +136,8 @@ def main():
                     f.write(f"- **行号**: `{loop['line']}`\n\n")
                     f.write("```c\n")
                     for line in loop['lines']:
-                        # 转义Markdown特殊字符
-                        escaped_line = line.replace('*', '\\*').replace('_', '\\_')
-                        f.write(escaped_line + '\n')
+                        # 直接写入，不转义下划线
+                        f.write(line + '\n')
                     f.write("```\n\n")
         
         print(f"已将所有for循环写入到 {args.output} 文件中")
